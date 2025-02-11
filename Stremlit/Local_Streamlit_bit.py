@@ -4,16 +4,16 @@ import streamlit as st
 import pandas as pd
 import psycopg
 
-# import os
-# import dotenv
-# from dotenv import load_dotenv
-# load_dotenv()
+import os
+import dotenv
+from dotenv import load_dotenv
+load_dotenv()
 
 
 
 def get_data ():
-    #dbconn = os.getenv('DBCONN')
-    dbconn = st.secrets['DBCONN'] # for local version need to comment out
+    dbconn = os.getenv('DBCONN')
+    #dbconn = st.secrets['DBCONN'] # for local version need to comment out
     conn = psycopg.connect(dbconn)
     Cur = conn.cursor()
     
@@ -49,9 +49,8 @@ def get_data ():
 results = get_data()
 
 st.title('Bitcoin Trend')
-st.dataframe(results)
+#st.dataframe(results)
 st.line_chart(data= results, x = "Date" , y= "Close")
 
 st.title('Bitcoin News')
-
 
