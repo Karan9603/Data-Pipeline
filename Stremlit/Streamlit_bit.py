@@ -1,18 +1,9 @@
-## for local version just make visible commented out lines and just need to hide st.secreates line
-
 import streamlit as st 
 import pandas as pd
 import psycopg
 
-# import os
-# import dotenv
-# from dotenv import load_dotenv
-# load_dotenv()
-
-
 
 def get_data ():
-    #dbconn = os.getenv('DBCONN')
     dbconn = st.secrets['DBCONN'] # for local version need to comment out
     conn = psycopg.connect(dbconn)
     Cur = conn.cursor()
