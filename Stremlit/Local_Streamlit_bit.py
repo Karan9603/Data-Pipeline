@@ -49,7 +49,7 @@ def get_data ():
 results = get_data()
 
 st.title('Bitcoin Trend')
-#st.dataframe(results)
+st.dataframe(results)
 
 options = ["Open", "High", "Low", "Close", "Volume"]
 selection = st.pills("Daily_Value", options, selection_mode="single")
