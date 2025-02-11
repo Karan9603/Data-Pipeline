@@ -41,7 +41,11 @@ results = get_data()
 
 st.title('Bitcoin Trend')
 st.dataframe(results)
-st.line_chart(data= results, x = "Date" , y= "Close")
+
+options = ["Open", "High", "Low", "Close", "Volume"]
+selection = st.pills("Daily_Value", options, selection_mode="single")
+
+st.line_chart(data= results, x = "Date" , y= selection)
 
 st.title('Bitcoin News')
 
