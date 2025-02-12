@@ -4,7 +4,7 @@ import psycopg
 
 
 def get_bitcoin_data():
-    dbconn = os.getenv('DBCONN')
+    dbconn = st.secrets['DBCONN'] # for local version need to comment out
     conn = psycopg.connect(dbconn)
     Cur = conn.cursor()
 
