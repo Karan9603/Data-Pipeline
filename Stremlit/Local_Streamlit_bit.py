@@ -3,20 +3,46 @@
 import streamlit as st 
 import pandas as pd
 import psycopg
+from datetime import datetime
 
 import os
 import dotenv
 from dotenv import load_dotenv
 load_dotenv()
 
+st.title('Bitcoin Trend')
 
+# Define months options
+Six_M = 6
+Three_M = 3
+One_M = 1
+
+options_M = [Six_M, Three_M, One_M]
+
+# Use Streamlit's selectbox or radio button for selecting months
+selection_M = st.selectbox("Select Time Period", options_M, index=0)  # Default to 6 months
+#selection_M = st.pills("Select Time Period", options_M, selection_mode="single", index = 0)
+
+# Get the current date
+current_date = pd.to_datetime('today')
+
+# Calculate the date X months ago
+X_months_ago = current_date - pd.DateOffset(months=selection_M)
+
+X_months_ago = X_months_ago.date()
+
+# Display the final date as a string
+st.write("Date for the selected period:", X_months_ago)
 
 def get_bitcoin_data():
-    dbconn = os.getenv('DBCONN')
+    dbconn = os.getenv('DBCONN')  # Ensure this is set correctly in your local or environment file
     conn = psycopg.connect(dbconn)
     Cur = conn.cursor()
-
-    results = Cur.execute('''select * from "Bitcoin_Data";''').fetchall()
+    
+    # Use parameterized query to safely pass X_months_ago value to SQL
+    query = '''select * from "Bitcoin_Data" where "Date" >= %s;'''
+    results = Cur.execute(query, (X_months_ago,)).fetchall()
+    
 
     conn.commit()
     Cur.close()
@@ -46,7 +72,6 @@ def get_bitcoin_data():
         "Volume": Bitcoin_Volumn
     })
     return Bitcoin_Data_DF
-
 
 def get_bitcoin_news():
     dbconn = os.getenv('DBCONN')
@@ -87,15 +112,17 @@ bitcoin_data_df = get_bitcoin_data()
 bitcoin_news_df = get_bitcoin_news()
 
 # Display Bitcoin Data
-st.title('Bitcoin Trend')
-#st.dataframe(bitcoin_data_df)
 
 options = ["Open", "High", "Low", "Close", "Volume"]
+#selection = st.radio("Daily_Value", options)  # Use st.radio or st.selectbox instead of st.pills
 selection = st.pills("Daily_Value", options, selection_mode="single")
-
-st.line_chart(data= bitcoin_data_df, x = "Date" , y= selection)
+st.line_chart(data=bitcoin_data_df, x="Date", y=selection)
 
 # Display Bitcoin News
 st.title('Bitcoin News')
 st.dataframe(bitcoin_news_df)
+
+
+print (X_months_ago)
+
 
